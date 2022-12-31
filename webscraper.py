@@ -46,13 +46,10 @@ url = "https://www.lemongym.ee/en/club-vacancy"
 elements = ['h3', 'h1']
 title = "Lemon"
 num = "%"
+
 data = scrape(url, elements)
-
-
-# Get the current date and time
 date_time = datetime.datetime.now()
-
 # format to YY:MM:DD HH:MM:SS
 date_time = date_time.strftime("%Y-%m-%d %I:%M:%S")
 
-# print(date_time)
+print(date_time)
