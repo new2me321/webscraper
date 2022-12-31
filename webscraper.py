@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 from celery import Celery
 import requests
 import datetime
+import csv
+import os
 
 app = Celery("scraper", broker="redis://localhost:9090")
 
@@ -39,7 +41,47 @@ def scrape(url, elements=None):
                     v = percentage
 
     scraped_data = dict(zip(k, v))
-    print(scraped_data)
+
+    if len(scraped_data) > 0:
+        return scraped_data
+    else:
+        raise ValueError("No data was scraped")
+
+
+def save_data(data, time, filename=None):
+    """
+    Save the data to a CSV.
+    """
+
+    if filename is not None:
+        # setup the save location and open file
+        filename = filename+'.csv'
+        file_path = os.path.join(os.getcwd(), filename)
+
+        if os.path.exists(file_path):
+            # if file already exists
+            with open(file_path, 'a+', newline='') as csvfile:
+
+                writer = csv.DictWriter(csvfile, fieldnames=['Name', 'Percentage', 'Time'])
+                
+                # Write the data as rows
+                for name, amount in data.items():
+                    writer.writerow(
+                        {'Name': name, 'Percentage': amount.strip('%'), 'Time': time})
+        else:
+            # create a new file
+            with open(file_path, 'w', newline='') as csvfile:
+                
+                writer = csv.DictWriter(csvfile, fieldnames=['Name', 'Percentage', 'Time'])
+                writer.writeheader()  # writes the header colum names
+
+                # Write the data as rows
+                for name, amount in data.items():
+                    writer.writerow(
+                        {'Name': name, 'Percentage': amount.strip('%'), 'Time': time})
+    else:
+        raise NotImplementedError(
+            "Enter a filename to save data.")
 
 
 url = "https://www.lemongym.ee/en/club-vacancy"
@@ -51,5 +93,5 @@ data = scrape(url, elements)
 date_time = datetime.datetime.now()
 # format to YY:MM:DD HH:MM:SS
 date_time = date_time.strftime("%Y-%m-%d %I:%M:%S")
-
-print(date_time)
+# print(data)
+save_data(data, date_time, filename="test1")
