@@ -4,11 +4,20 @@ import requests
 import datetime
 import csv
 import os
+from celery.schedules import crontab
 
-app = Celery("scraper", broker="redis://localhost:9090")
+
+app = Celery("webscraper", broker="redis://localhost:6379/0")
+
+#  configure the periodic schedule 
+app.conf.beat_schedule = {
+"scrape-LemonGym": {
+    "task": "webscraper.run_scraper",
+    "schedule": crontab(minute='*/30'),
+    }}
 
 
-@app.task()
+
 def scrape(url, elements=None):
     """
     Scrape the given URL and return the results.
@@ -84,14 +93,38 @@ def save_data(data, time, filename=None):
             "Enter a filename to save data.")
 
 
-url = "https://www.lemongym.ee/en/club-vacancy"
-elements = ['h3', 'h1']
-title = "Lemon"
-num = "%"
 
-data = scrape(url, elements)
-date_time = datetime.datetime.now()
-# format to YY:MM:DD HH:MM:SS
-date_time = date_time.strftime("%Y-%m-%d %I:%M:%S")
-# print(data)
-save_data(data, date_time, filename="test1")
+
+@app.task
+def run_scraper():
+    global title, num
+
+    url = "https://www.lemongym.ee/en/club-vacancy"
+    elements = ['h3', 'h1']
+    title = "Lemon"
+    num = "%"
+    success = False
+    try:
+        data = scrape(url, elements)
+        date_time = datetime.datetime.now()
+        # format to YY:MM:DD HH:MM:SS
+        date_time = date_time.strftime("%Y-%m-%d %I:%M:%S")
+        # print(data)
+        save_data(data, date_time, filename="gymdata")
+        success = True
+    except Exception as e:
+        print(e)
+    finally:
+        if success:
+            return f"Success! Scraped data on {date_time}"
+        else:
+            return f"Task failed! {date_time}"
+    
+
+
+
+
+
+
+
+
