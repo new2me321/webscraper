@@ -1,16 +1,13 @@
 # webscraper
 Trying to build a webscraper tool that can be deployed on a webserver.
 
+Currently, the web scraper scrapes the occupancy rate at my preferred Gym.
 
 ## Requirements
     pip install beautifulsoup4
     pip install requests
     pip install celery
-    
 
-
-## What it does?
-The web scraper scrapes the occupancy rate at my preferred Gym.
 
 ## How to deploy on a local server
 ---
