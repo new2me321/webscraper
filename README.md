@@ -7,6 +7,7 @@ Currently, the web scraper scrapes the occupancy rate at my preferred Gym.
     pip install beautifulsoup4
     pip install requests
     pip install celery
+    pip install Redis
 
 
 ## How to deploy on a local server
