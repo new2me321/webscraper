@@ -108,7 +108,7 @@ def run_scraper():
         data = scrape(url, elements)
         date_time = datetime.datetime.now()
         # format to YY:MM:DD HH:MM:SS
-        date_time = date_time.strftime("%Y-%m-%d %I:%M:%S")
+        date_time = date_time.strftime("%Y-%m-%d %H:%M:%S")
         # print(data)
         save_data(data, date_time, filename="gymdata")
         success = True
