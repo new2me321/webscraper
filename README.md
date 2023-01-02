@@ -32,6 +32,8 @@ Currently, the web scraper scrapes the occupancy rate at my preferred Gym.
     celery -A webscraper worker -l info -B
     ```
 
+    ![working progress](./images/working.png)
+
 ## How to deploy on a web server
 ---
 TBA
